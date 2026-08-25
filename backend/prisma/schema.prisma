@@ -1,0 +1,3 @@
+// Prisma schema — define User, Habit, CheckIn models here
+// Key: CheckIn.localDate should be a DATE (no time component)
+// Unique constraint on (habitId, localDate) enforces "one check-in per local day"
