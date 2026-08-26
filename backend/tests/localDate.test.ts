@@ -8,6 +8,7 @@ import {
   parseLocalDateToDbDate,
   formatDbDateToLocalDateString,
 } from '../src/lib/localDate';
+import { computeCurrentStreak } from '../src/streaks/streaks';
 
 describe('localDate module', () => {
   describe('isValidIanaTimezone', () => {
@@ -44,6 +45,36 @@ describe('localDate module', () => {
       expect(isValidLocalDateString('2025-02-29')).toBe(false); // not a leap year
       expect(isValidLocalDateString('2026-13-01')).toBe(false);
       expect(isValidLocalDateString('')).toBe(false);
+    });
+  });
+
+  describe('Worked Example (Asia/Kolkata, UTC+05:30)', () => {
+    it('accurately resolves local days and consecutive streaks across 20-hour and 11-hour gaps', () => {
+      const tz = 'Asia/Kolkata';
+
+      // Check-in A: 2026-03-10T14:30Z -> local 2026-03-10 20:00 -> "2026-03-10"
+      const instantA = '2026-03-10T14:30:00.000Z';
+      const localDayA = toLocalDateString(instantA, tz);
+      expect(localDayA).toBe('2026-03-10');
+
+      // Check-in B: 2026-03-11T10:30Z -> local 2026-03-11 16:00 (20 hours apart, two different local days -> streak = 2)
+      const instantB = '2026-03-11T10:30:00.000Z';
+      const localDayB = toLocalDateString(instantB, tz);
+      expect(localDayB).toBe('2026-03-11');
+      expect(computeCurrentStreak([localDayA, localDayB], localDayB)).toBe(2);
+
+      // Check-in C: 2026-03-11T21:30Z -> local 2026-03-12 03:00 (11 hours after B, a new local day -> streak = 3)
+      const instantC = '2026-03-11T21:30:00.000Z';
+      const localDayC = toLocalDateString(instantC, tz);
+      expect(localDayC).toBe('2026-03-12');
+      expect(computeCurrentStreak([localDayA, localDayB, localDayC], localDayC)).toBe(3);
+
+      // Check-in D: 2026-03-12T17:30Z -> local 2026-03-12 23:00 (20 hours after C, SAME local day -> duplicate, streak stays 3)
+      const instantD = '2026-03-12T17:30:00.000Z';
+      const localDayD = toLocalDateString(instantD, tz);
+      expect(localDayD).toBe('2026-03-12');
+      expect(localDayD).toBe(localDayC); // duplicate local day
+      expect(computeCurrentStreak([localDayA, localDayB, localDayC, localDayD], localDayD)).toBe(3);
     });
   });
 

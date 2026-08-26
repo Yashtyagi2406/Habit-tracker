@@ -6,6 +6,11 @@ export const createHabitSchema = z.object({
     .trim()
     .min(1, 'Habit name cannot be empty')
     .max(100, 'Habit name must not exceed 100 characters'),
+  description: z
+    .string()
+    .trim()
+    .max(500, 'Description must not exceed 500 characters')
+    .optional(),
 });
 
 export type CreateHabitInput = z.infer<typeof createHabitSchema>;

@@ -8,6 +8,7 @@ export const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [habits, setHabits] = useState<HabitData[]>([]);
   const [newHabitName, setNewHabitName] = useState('');
+  const [newHabitDescription, setNewHabitDescription] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,9 +42,13 @@ export const Dashboard: React.FC = () => {
     try {
       await apiFetch('/habits', {
         method: 'POST',
-        body: JSON.stringify({ name: newHabitName.trim() }),
+        body: JSON.stringify({
+          name: newHabitName.trim(),
+          description: newHabitDescription.trim() || undefined,
+        }),
       });
       setNewHabitName('');
+      setNewHabitDescription('');
       await fetchHabits();
     } catch (err) {
       if (err instanceof ApiError) {
@@ -134,23 +139,34 @@ export const Dashboard: React.FC = () => {
             <Plus size={16} color="#6366f1" />
             <span>Create New Habit</span>
           </h2>
-          <form className="create-habit-form" onSubmit={handleCreateHabit}>
-            <input
-              type="text"
-              placeholder="e.g. Read 20 pages, Daily Meditation, Morning Run..."
-              value={newHabitName}
-              onChange={(e) => setNewHabitName(e.target.value)}
-              required
-              maxLength={100}
-            />
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={isCreating || !newHabitName.trim()}
-              style={{ width: 'auto', whiteSpace: 'nowrap' }}
-            >
-              {isCreating ? 'Adding...' : 'Add Habit'}
-            </button>
+          <form className="create-habit-form" onSubmit={handleCreateHabit} style={{ flexDirection: 'column', gap: '0.6rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                placeholder="Habit name (e.g. Read 20 pages, Drink 3L water...)"
+                value={newHabitName}
+                onChange={(e) => setNewHabitName(e.target.value)}
+                required
+                maxLength={100}
+                style={{ flex: 2 }}
+              />
+              <input
+                type="text"
+                placeholder="Optional description (e.g. In the morning after coffee)"
+                value={newHabitDescription}
+                onChange={(e) => setNewHabitDescription(e.target.value)}
+                maxLength={500}
+                style={{ flex: 3 }}
+              />
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={isCreating || !newHabitName.trim()}
+                style={{ width: 'auto', whiteSpace: 'nowrap', padding: '0.75rem 1.5rem' }}
+              >
+                {isCreating ? 'Adding...' : 'Add Habit'}
+              </button>
+            </div>
           </form>
         </section>
 

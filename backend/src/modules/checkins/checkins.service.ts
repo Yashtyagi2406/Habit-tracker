@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 import {
   getLocalToday,
+  toLocalDateString,
   isFutureLocalDate,
   parseLocalDateToDbDate,
   formatDbDateToLocalDateString,
@@ -41,10 +42,20 @@ export async function logCheckIn(
     );
   }
 
-  // 4. Convert to canonical UTC midnight Date object for PostgreSQL DATE column
+  // 4. Reject dates before the habit's creation local day
+  const habitCreationLocalDate = toLocalDateString(habit.createdAt, userTimezone);
+  if (targetLocalDate < habitCreationLocalDate) {
+    throw new AppError(
+      400,
+      'DATE_BEFORE_HABIT_CREATION',
+      `Cannot check in for date "${targetLocalDate}" before habit creation date "${habitCreationLocalDate}"`
+    );
+  }
+
+  // 5. Convert to canonical UTC midnight Date object for PostgreSQL DATE column
   const dbDate = parseLocalDateToDbDate(targetLocalDate);
 
-  // 5. Insert check-in record, relying on DB unique constraint (habitId, localDate)
+  // 6. Insert check-in record, relying on DB unique constraint (habitId, localDate)
   let checkInRecord;
   try {
     checkInRecord = await prisma.checkIn.create({
@@ -64,7 +75,7 @@ export async function logCheckIn(
     throw error;
   }
 
-  // 6. Fetch all check-ins for this habit to compute updated streaks
+  // 7. Fetch all check-ins for this habit to compute updated streaks
   const allCheckIns = await prisma.checkIn.findMany({
     where: { habitId },
     select: { localDate: true },

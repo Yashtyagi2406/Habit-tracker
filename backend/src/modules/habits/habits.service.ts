@@ -7,6 +7,7 @@ export interface HabitWithStreaks {
   id: string;
   userId: string;
   name: string;
+  description: string | null;
   createdAt: Date;
   updatedAt: Date;
   currentStreak: number;
@@ -21,11 +22,13 @@ export async function createHabit(userId: string, input: CreateHabitInput) {
     data: {
       userId,
       name: input.name,
+      description: input.description ?? null,
     },
     select: {
       id: true,
       userId: true,
       name: true,
+      description: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -78,6 +81,7 @@ export async function listUserHabits(
       id: habit.id,
       userId: habit.userId,
       name: habit.name,
+      description: habit.description,
       createdAt: habit.createdAt,
       updatedAt: habit.updatedAt,
       currentStreak,
