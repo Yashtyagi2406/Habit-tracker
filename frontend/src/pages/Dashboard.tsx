@@ -70,7 +70,7 @@ export const Dashboard: React.FC = () => {
       {/* Navigation */}
       <header className="navbar">
         <div className="navbar-brand">
-          <Flame size={24} color="#6366f1" />
+          <Flame size={24} color="#f97316" />
           <span>HabitTracker</span>
         </div>
 
@@ -117,13 +117,13 @@ export const Dashboard: React.FC = () => {
           </div>
           <div className="summary-card">
             <div className="summary-card-title">Completed Today</div>
-            <div className="summary-card-value" style={{ color: '#10b981' }}>
+            <div className="summary-card-value" style={{ color: '#059669' }}>
               {completedTodayCount} / {habits.length}
             </div>
           </div>
           <div className="summary-card">
             <div className="summary-card-title">Best Overall Streak</div>
-            <div className="summary-card-value" style={{ color: '#f59e0b' }}>
+            <div className="summary-card-value" style={{ color: '#d97706' }}>
               {maxLongestStreakAll} {maxLongestStreakAll === 1 ? 'day' : 'days'}
             </div>
           </div>
@@ -135,8 +135,8 @@ export const Dashboard: React.FC = () => {
 
         {/* Create Habit Form */}
         <section className="create-habit-card">
-          <h2 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Plus size={16} color="#6366f1" />
+          <h2 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#1c1917' }}>
+            <Plus size={16} color="#4f46e5" />
             <span>Create New Habit</span>
           </h2>
           <form className="create-habit-form" onSubmit={handleCreateHabit} style={{ flexDirection: 'column', gap: '0.6rem' }}>
@@ -172,8 +172,8 @@ export const Dashboard: React.FC = () => {
 
         {/* Habits List */}
         <section>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Sparkles size={18} color="#f59e0b" />
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#1c1917' }}>
+            <Sparkles size={18} color="#d97706" />
             <span>Your Habits & Streaks</span>
           </h2>
 
@@ -183,7 +183,7 @@ export const Dashboard: React.FC = () => {
             </div>
           ) : habits.length === 0 ? (
             <div className="empty-state">
-              <CheckCircle2 size={42} color="#64748b" style={{ margin: '0 auto 0.75rem' }} />
+              <CheckCircle2 size={42} color="#a8a29e" style={{ margin: '0 auto 0.75rem' }} />
               <h3>No habits tracked yet</h3>
               <p>Create your first habit above to begin building streaks!</p>
             </div>

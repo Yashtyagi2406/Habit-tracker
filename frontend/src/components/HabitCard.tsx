@@ -70,7 +70,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, onRefresh }) => {
           {showHistory && (
             <div className="backfill-panel" style={{ marginTop: '0.5rem', maxHeight: '180px', overflowY: 'auto' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <CalendarCheck2 size={14} color="#10b981" />
+                <CalendarCheck2 size={14} color="#059669" />
                 <span>Logged Local Days:</span>
               </div>
               {habit.checkInDates.length === 0 ? (
@@ -85,9 +85,10 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, onRefresh }) => {
                         fontFamily: 'monospace',
                         padding: '0.2rem 0.5rem',
                         borderRadius: '4px',
-                        background: 'rgba(16, 185, 129, 0.15)',
-                        border: '1px solid rgba(16, 185, 129, 0.3)',
-                        color: '#86efac',
+                        background: 'rgba(240, 253, 244, 0.9)',
+                        border: '1px solid rgba(16, 185, 129, 0.35)',
+                        color: '#065f46',
+                        fontWeight: 600,
                       }}
                     >
                       {dateStr}
