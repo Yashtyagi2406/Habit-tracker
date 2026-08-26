@@ -1,62 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Flame, AlertCircle, Globe } from 'lucide-react';
+import { Flame, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ApiError } from '../api/client';
-
-const COMMON_TIMEZONES = [
-  'UTC',
-  'Africa/Cairo',
-  'Africa/Johannesburg',
-  'Africa/Lagos',
-  'Africa/Nairobi',
-  'America/Anchorage',
-  'America/Argentina/Buenos_Aires',
-  'America/Bogota',
-  'America/Chicago',
-  'America/Denver',
-  'America/Los_Angeles',
-  'America/Mexico_City',
-  'America/New_York',
-  'America/Phoenix',
-  'America/Santiago',
-  'America/Sao_Paulo',
-  'America/Toronto',
-  'America/Vancouver',
-  'Asia/Bangkok',
-  'Asia/Dubai',
-  'Asia/Hong_Kong',
-  'Asia/Jakarta',
-  'Asia/Jerusalem',
-  'Asia/Karachi',
-  'Asia/Kolkata',
-  'Asia/Manila',
-  'Asia/Seoul',
-  'Asia/Shanghai',
-  'Asia/Singapore',
-  'Asia/Taipei',
-  'Asia/Tokyo',
-  'Australia/Adelaide',
-  'Australia/Brisbane',
-  'Australia/Melbourne',
-  'Australia/Perth',
-  'Australia/Sydney',
-  'Europe/Amsterdam',
-  'Europe/Berlin',
-  'Europe/Dublin',
-  'Europe/Istanbul',
-  'Europe/London',
-  'Europe/Madrid',
-  'Europe/Paris',
-  'Europe/Rome',
-  'Pacific/Auckland',
-  'Pacific/Honolulu',
-];
+import { TimezoneSelect } from '../components/TimezoneSelect';
 
 export const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [timezone, setTimezone] = useState('');
+  const [detectedTz, setDetectedTz] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -65,14 +18,21 @@ export const Register: React.FC = () => {
 
   useEffect(() => {
     try {
-      const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (detectedTz) {
-        setTimezone(detectedTz);
+      let detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // Canonicalize if needed (e.g. Asia/Calcutta -> Asia/Kolkata)
+      if (detected === 'Asia/Calcutta') {
+        detected = 'Asia/Kolkata';
+      }
+      if (detected) {
+        setTimezone(detected);
+        setDetectedTz(detected);
       } else {
         setTimezone('UTC');
+        setDetectedTz('UTC');
       }
     } catch {
       setTimezone('UTC');
+      setDetectedTz('UTC');
     }
   }, []);
 
@@ -100,7 +60,7 @@ export const Register: React.FC = () => {
       <div className="auth-card">
         <div className="auth-header">
           <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary-light)', padding: '0.75rem', borderRadius: '50%', marginBottom: '0.75rem' }}>
-            <Flame size={32} color="#6366f1" />
+            <Flame size={32} color="#4f46e5" />
           </div>
           <h1>Create an Account</h1>
           <p>Track habits with precision local timezone streaks</p>
@@ -140,25 +100,14 @@ export const Register: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="timezone" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Globe size={14} />
-              <span>IANA Timezone</span>
+            <label style={{ display: 'block', marginBottom: '0.45rem' }}>
+              IANA Timezone
             </label>
-            <select
-              id="timezone"
+            <TimezoneSelect
               value={timezone}
-              onChange={(e) => setTimezone(e.target.value)}
-              required
-            >
-              {timezone && !COMMON_TIMEZONES.includes(timezone) && (
-                <option value={timezone}>{timezone} (Detected)</option>
-              )}
-              {COMMON_TIMEZONES.map((tz) => (
-                <option key={tz} value={tz}>
-                  {tz}
-                </option>
-              ))}
-            </select>
+              onChange={(tz) => setTimezone(tz)}
+              detectedTz={detectedTz}
+            />
             <span className="form-hint">
               Used strictly to calculate your local calendar day for check-ins and streaks.
             </span>
